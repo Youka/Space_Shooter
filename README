@@ -4,6 +4,7 @@ Requirements
 * GCC 4.8+ (compiler)
 * Make (build tool)
 * libncurses-dev (library dependency)
+* git (version control system) [optional; for development]
 
 
 #################

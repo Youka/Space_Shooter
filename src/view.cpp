@@ -4,6 +4,9 @@
 
 namespace View{
 	TUI::TUI() : win(initscr(), [](const WINDOW* stdwin) -> void{if(stdwin) endwin();}){
+		// Check terminal setup
+		if(!this->win)
+			throw std::runtime_error("Couldn't setup TUI!");
 		// Set terminal properties
 		if(noecho() /* Don't display user input*/ ||
 		   raw() /* Take special keys too/disable line buffering */ ||
@@ -45,6 +48,9 @@ namespace View{
 	}
 	void TUI::addString(const std::string& str) const noexcept{
 		addstr(str.c_str());
+	}
+	void TUI::clear(void) const noexcept{
+		erase();
 	}
 	void TUI::draw(void) const noexcept{
 		refresh();
