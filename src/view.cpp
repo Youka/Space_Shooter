@@ -15,7 +15,7 @@ namespace View{
 			throw std::domain_error("Couldn't set TUI properties properly!");
 		timeout(0); /* Disable blocking on input requests */
 	}
-	
+
 	TUI::TUI(TUI&& other) noexcept : win(std::move(other.win)){}
 	TUI& TUI::operator=(TUI&& other) noexcept{
 		this->win = std::move(other.win);
@@ -27,7 +27,7 @@ namespace View{
 			throw std::domain_error("Just one TUI instance is allowed to exist!");
 		return TUI();
 	}
-	
+
 	Model::Dim2 TUI::getMaxSize(void) const noexcept{
 		unsigned char width, height;
 		getmaxyx(stdscr, height, width);
