@@ -1,0 +1,7 @@
+# Generated object files
+src/*.o
+src/*.res
+
+# Generated binaries
+/*.exe
+/Space_Shooter

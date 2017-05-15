@@ -1,0 +1,27 @@
+#################
+Requirements
+#################
+* GCC 4.8+ (compiler)
+* Make (build tool)
+* libncurses-dev (library dependency)
+
+
+#################
+Build
+#################
+Unix:
+Build by call make.
+Clean by call make with target 'clean'.
+
+Windows:
+Change to directory win_build.
+Update env.bat contents by replacing the existent MinGW binaries path to yours.
+Build by execute make.bat.
+Clean by execute clean.bat.
+
+
+#################
+Environments
+#################
+Windows: links standard libraries statically and adds version information to executable
+Unix: links standard libraries dynamically
