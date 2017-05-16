@@ -1,18 +1,10 @@
 #include "controller.hpp"
-#include "view.hpp"
-#include "conf.h"
 
-#include <iostream>
-#include <chrono>
-#include <unistd.h>
 #include <vector>
 #include <random>
 
-// Current time shortcut
-#define NOW std::chrono::system_clock::now()
-
 namespace Controller{
-	static void event(Model::GameState& state, const View::TUI& tui){
+	void event(Model::GameState& state, const View::TUI& tui) noexcept{
 		// Extract current key code
 		const int key_code = tui.getKey();
 		// Context-dependend actions
@@ -50,45 +42,58 @@ namespace Controller{
 					}
 				break;
 			case Model::GameState::Window::GAME:
+				// Bullet movement
+				
+				// TODO
+				
+				// Enemy movement
+				
+				// TODO
+				
+				// Enemies & entities generation
+				
+				// TODO
+				
+				// Control actions
 				switch(key_code){
 					case 27: /* <ESC> */
 						state.window = Model::GameState::Window::MENU;
 						state.status.changed = true;
 						break;
 					case KEY_DOWN:
-						if(state.game.player_y < static_cast<short>(tui.getMaxSize().y - 2)){
-							state.game.player_y++;
+						if(state.game.player.y < tui.getMaxSize().y - 2){
+							state.game.player.y++;
 							state.status.changed = true;
 						}
 						break;
 					case KEY_UP:
-						if(state.game.player_y > 1){
-							state.game.player_y--;
+						if(state.game.player.y > 1){
+							state.game.player.y--;
 							state.status.changed = true;
 						}
 						break;
 					case KEY_LEFT:
-						if(state.game.player_x > 1){
-							state.game.player_x--;
+						if(state.game.player.x > 1){
+							state.game.player.x--;
 							state.status.changed = true;
 						}
 						break;
 					case KEY_RIGHT:
-						if(state.game.player_x < static_cast<short>(tui.getMaxSize().x - 2)){
-							state.game.player_x++;
+						if(state.game.player.x < tui.getMaxSize().x - 2){
+							state.game.player.x++;
 							state.status.changed = true;
 						}
 						break;
 					case ' ':
-						
-						// TODO
-						
+						state.game.bullets.push_back({state.game.player.x + 1, state.game.player.y});
+						state.status.changed = true;
 						break;
 				}
 				break;
 		}
 	}
-	static void draw(Model::GameState& state, const View::TUI& tui){
+
+	void draw(Model::GameState& state, const View::TUI& tui) noexcept{
 		// Any change to render?
 		if(state.status.changed){
 			// Clear screen first
@@ -142,11 +147,18 @@ namespace Controller{
 						tui.addChar('#');
 					}
 					// Draw player ship
-					tui.move(state.game.player_x, state.game.player_y);
+					tui.move(state.game.player.x, state.game.player.y);
 					tui.addChar('}', A_BOLD);
-				
-					// TODO
-					
+					// Draw enemies
+					for(const Model::Dim2 enemy : state.game.enemies){
+						tui.move(enemy.x, enemy.y);
+						tui.addChar('<', A_BOLD);
+					}
+					// Draw bullets
+					for(const Model::Dim2 bullet : state.game.bullets){
+						tui.move(bullet.x, bullet.y);
+						tui.addChar('-', A_BOLD);
+					}
 					break;
 				}
 			}
@@ -155,57 +167,5 @@ namespace Controller{
 			// Changes rendered, no further
 			state.status.changed = false;
 		}
-	}
-	static void life(Model::GameState& state, const View::TUI& tui){
-		// Circle status
-		auto event_last_time = NOW,
-			draw_last_time = event_last_time;
-		// Circling for updates
-		do{
-			// Time to process an event?
-			if(std::chrono::duration_cast<std::chrono::milliseconds>(NOW - event_last_time).count() >= EVENT_DELAY_MS){
-				event(state, tui);
-				event_last_time = NOW;
-			}
-			// Time to draw something?
-			if(std::chrono::duration_cast<std::chrono::milliseconds>(NOW - draw_last_time).count() >= DRAW_DELAY_MS){
-				draw(state, tui);
-				draw_last_time = NOW;
-			}
-			// Skip idle time / set scheduler for better performance
-			usleep(std::max(static_cast<typename std::chrono::milliseconds::rep>(0), std::min(
-					EVENT_DELAY_MS - std::chrono::duration_cast<std::chrono::milliseconds>(NOW - event_last_time).count(),
-					DRAW_DELAY_MS - std::chrono::duration_cast<std::chrono::milliseconds>(NOW - draw_last_time).count()
-				)) * 1000 /* MS to US */);
-		}while(state.status.alive);
-	}
-
-	void run(const std::set<std::string>& params){
-		// Show command line help
-		if(params.find("-help") != params.cend()){
-			std::cout <<
-			"Options:\n"
-			"-help\t\tShows this information\n"
-			"-invert\t\tInverts screen colors"
-			<< std::endl;
-			return;
-		}
-		
-		// Create TUI
-		const View::TUI tui = View::TUI::create();
-		// Create game state
-		Model::GameState state = {
-			{true, true},
-			Model::GameState::Window::MENU,
-			Model::GameState::Menu::START,
-			{2, static_cast<short>((tui.getMaxSize().y - 1) >> 1)}
-		};
-
-		// Change TUI colors
-		if(params.find("-invert") != params.cend())
-			tui.setBK(COLOR_BLACK, COLOR_WHITE);
-
-		// Start application life circle
-		life(state, tui);
 	}
 }

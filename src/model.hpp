@@ -1,5 +1,7 @@
 #pragma once
 
+#include <vector>
+
 namespace Model{
 	struct Dim2{unsigned x, y;};
 
@@ -10,7 +12,8 @@ namespace Model{
 		// Windows
 		enum class Menu{START, EXIT} menu;
 		struct{
-			short player_x, player_y;
+			Dim2 player;
+			std::vector<Dim2> enemies, bullets;
 		} game;
 	};
 }
