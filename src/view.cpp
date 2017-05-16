@@ -51,15 +51,31 @@ namespace View{
 	void TUI::move(const int x, const int y) const noexcept{
 		::move(y, x);
 	}
-
+	void TUI::addChar(const char c, const short fcolor, const short bcolor, const int attr) const{
+		if(!has_colors())
+			throw std::domain_error("TUI doesn't support color change!");
+		start_color();
+		init_pair(2, fcolor, bcolor);
+		attron(COLOR_PAIR(2));
+		this->addChar(c, attr);
+		attroff(COLOR_PAIR(2));
+	}
+	void TUI::addChar(const char c, const int attr) const noexcept{
+		if(attr){
+			attron(attr);
+			addch(c);
+			attroff(attr);
+		}else
+			addch(c);
+	}
 	void TUI::addString(const std::string& str, const short fcolor, const short bcolor, const int attr) const{
 		if(!has_colors())
 			throw std::domain_error("TUI doesn't support color change!");
 		start_color();
-		init_pair(1, fcolor, bcolor);
-		attron(COLOR_PAIR(1));
+		init_pair(2, fcolor, bcolor);
+		attron(COLOR_PAIR(2));
 		this->addString(str, attr);
-		attroff(COLOR_PAIR(1));
+		attroff(COLOR_PAIR(2));
 	}
 	void TUI::addString(const std::string& str, const int attr) const noexcept{
 		if(attr){

@@ -9,6 +9,8 @@ namespace Model{
 		enum class Window{MENU, GAME} window;
 		// Windows
 		enum class Menu{START, EXIT} menu;
-		struct{} game;
+		struct{
+			short player_x, player_y;
+		} game;
 	};
 }
