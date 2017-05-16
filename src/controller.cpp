@@ -17,9 +17,12 @@ namespace Controller{
 		// Context-dependend actions
 		switch(state.window){
 			case Model::GameState::Window::MENU:
-				
-				// TODO
-				
+				// Change menu selection
+				switch(state.menu){
+					
+					// TODO
+					
+				}
 				break;
 			case Model::GameState::Window::GAME:
 				
@@ -37,9 +40,10 @@ namespace Controller{
 			switch(state.window){
 				case Model::GameState::Window::MENU:
 					// Draw menu points
-					
-					// TODO
-					
+					tui.move(5, 5);
+					tui.addString("Start", state.menu == Model::GameState::Menu::START ? A_BOLD : 0);
+					tui.move(5, 7);
+					tui.addString("Exit", state.menu == Model::GameState::Menu::EXIT ? A_BOLD : 0);
 					break;
 				case Model::GameState::Window::GAME:
 					

@@ -49,10 +49,10 @@ namespace View{
 		bkgd(COLOR_PAIR(1));
 	}
 	void TUI::move(const int x, const int y) const noexcept{
-		move(y, x);
+		::move(y, x);
 	}
 
-	void TUI::addString(const std::string& str, const short attr) const noexcept{
+	void TUI::addString(const std::string& str, const int attr) const noexcept{
 		attron(attr);
 		addstr(str.c_str());
 		attroff(attr);
