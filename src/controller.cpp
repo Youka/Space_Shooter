@@ -17,11 +17,32 @@ namespace Controller{
 		// Context-dependend actions
 		switch(state.window){
 			case Model::GameState::Window::MENU:
-				// Change menu selection
 				switch(state.menu){
-					
-					// TODO
-					
+					case Model::GameState::Menu::START:
+						switch(key_code){
+							case KEY_DOWN:
+							case KEY_UP:
+								state.menu = Model::GameState::Menu::EXIT;
+								state.status.changed = true;
+								break;
+							case ' ':
+								state.window = Model::GameState::Window::GAME;
+								state.status.changed = true;
+								break;
+						}
+						break;
+					case Model::GameState::Menu::EXIT:
+						switch(key_code){
+							case KEY_DOWN:
+							case KEY_UP:
+								state.menu = Model::GameState::Menu::START;
+								state.status.changed = true;
+								break;
+							case ' ':
+								state.status.alive = false;
+								break;
+						}
+						break;
 				}
 				break;
 			case Model::GameState::Window::GAME:
@@ -39,12 +60,20 @@ namespace Controller{
 			// Context-dependend actions
 			switch(state.window){
 				case Model::GameState::Window::MENU:
+				{
 					// Draw menu points
-					tui.move(5, 5);
-					tui.addString("Start", state.menu == Model::GameState::Menu::START ? A_BOLD : 0);
-					tui.move(5, 7);
-					tui.addString("Exit", state.menu == Model::GameState::Menu::EXIT ? A_BOLD : 0);
+					static const std::string start_title("Start"),
+										exit_title("Exit"),
+										creator_title("by Youka");
+					const auto sz = tui.getMaxSize();
+					tui.move((sz.x - 1 - start_title.length()) >> 1, (sz.y - 1) >> 1);
+					tui.addString(start_title, state.menu == Model::GameState::Menu::START ? A_BOLD : 0);
+					tui.move((sz.x - 1 - exit_title.length()) >> 1, ((sz.y - 1) >> 1) + 2);
+					tui.addString(exit_title, state.menu == Model::GameState::Menu::EXIT ? A_BOLD : 0);
+					tui.move(sz.x - creator_title.length(), sz.y-1);
+					tui.addString(creator_title, COLOR_RED, COLOR_BLACK, A_BOLD);
 					break;
+				}
 				case Model::GameState::Window::GAME:
 					
 					// TODO

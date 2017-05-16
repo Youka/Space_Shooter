@@ -35,8 +35,8 @@ namespace View{
 			int getKey(void) const noexcept;
 			void setBK(const short, const short) const;
 			void move(const int, const int) const noexcept;
-			void addString(const std::string&, const int) const noexcept;
-			void addString(const std::string&) const noexcept;
+			void addString(const std::string&, const short, const short, const int = 0) const;
+			void addString(const std::string&, const int = 0) const noexcept;
 			void clear(void) const noexcept;
 			void draw(void) const noexcept;
 	};
