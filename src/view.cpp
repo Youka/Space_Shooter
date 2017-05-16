@@ -33,6 +33,11 @@ namespace View{
 		getmaxyx(stdscr, height, width);
 		return {width, height};
 	}
+	Model::Dim2 TUI::getPos(void) const noexcept{
+		unsigned char x, y;
+		getyx(stdscr, y, x);
+		return {x, y};
+	}
 	int TUI::getKey(void) const noexcept{
 		return getch();
 	}
@@ -43,8 +48,14 @@ namespace View{
 		init_pair(1, fcolor, bcolor);
 		bkgd(COLOR_PAIR(1));
 	}
-	void TUI::moveCursor(const int x, const int y) const noexcept{
+	void TUI::move(const int x, const int y) const noexcept{
 		move(y, x);
+	}
+
+	void TUI::addString(const std::string& str, const short attr) const noexcept{
+		attron(attr);
+		addstr(str.c_str());
+		attroff(attr);
 	}
 	void TUI::addString(const std::string& str) const noexcept{
 		addstr(str.c_str());

@@ -31,9 +31,11 @@ namespace View{
 			
 			// TUI operations
 			Model::Dim2 getMaxSize(void) const noexcept;
+			Model::Dim2 getPos(void) const noexcept;
 			int getKey(void) const noexcept;
 			void setBK(const short, const short) const;
-			void moveCursor(const int, const int) const noexcept;
+			void move(const int, const int) const noexcept;
+			void addString(const std::string&, const short) const noexcept;
 			void addString(const std::string&) const noexcept;
 			void clear(void) const noexcept;
 			void draw(void) const noexcept;

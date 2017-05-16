@@ -17,45 +17,41 @@ namespace Controller{
 		// Context-dependend actions
 		switch(state.window){
 			case Model::GameState::Window::MENU:
+				
+				// TODO
+				
 				break;
 			case Model::GameState::Window::GAME:
+				
+				// TODO
+				
 				break;
 		}
 	}
 	static void draw(Model::GameState& state, const View::TUI& tui){
 		// Any change to render?
 		if(state.status.changed){
+			// Clear screen first
+			tui.clear();
 			// Context-dependend actions
 			switch(state.window){
 				case Model::GameState::Window::MENU:
+					// Draw menu points
+					
+					// TODO
+					
 					break;
 				case Model::GameState::Window::GAME:
+					
+					// TODO
+					
 					break;
 			}
+			// Draw changes to screen
+			tui.draw();
 			// Changes rendered, no further
 			state.status.changed = false;
 		}
-		/*
-		// Get current screen size/maximal cursor positions
-		Model::Dim2 dim = tui.getMaxSize();
-		
-		// Clear old screen
-		tui.clear();
-
-		// Output screen size
-		tui.moveCursor(5, 2);
-		tui.addString(std::to_string(dim.width));
-		tui.moveCursor(5, 3);
-		tui.addString(std::to_string(dim.height));
-
-		// Output runtime
-		static int i = 0;
-		tui.moveCursor(5+i, 4);
-		tui.addString(std::to_string(i++));
-		
-		// Draw outputs
-		tui.draw();
-		*/
 	}
 	static void life(Model::GameState& state, const View::TUI& tui){
 		// Circle status
@@ -101,7 +97,7 @@ namespace Controller{
 			Model::GameState::Menu::START,
 			{}
 		};
-		
+
 		// Change TUI colors
 		if(params.find("-invert") != params.cend())
 			tui.setBK(COLOR_BLACK, COLOR_WHITE);

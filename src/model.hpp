@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Model{
-	struct Dim2{unsigned width, height;};
+	struct Dim2{unsigned x, y;};
 
 	struct GameState{
 		// Metainformation
