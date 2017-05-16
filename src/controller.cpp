@@ -3,24 +3,39 @@
 #include "conf.h"
 
 #include <iostream>
-#include <unistd.h>
 #include <chrono>
-
+#include <unistd.h>
 
 // Current time shortcut
 #define NOW std::chrono::system_clock::now()
 
 namespace Controller{
-	static bool event(Model::GameState& state, const int key_code){
-
-		// TODO: handle control keys
-
-		return key_code != 27	/* 27 = <ESC> */;
+	static void event(Model::GameState& state, const int key_code){
+		// Global close
+		if(key_code == 27 /* 27 = <ESC> */)
+			state.status.alive = false;
+		// Context-dependend actions
+		switch(state.window){
+			case Model::GameState::Window::MENU:
+				break;
+			case Model::GameState::Window::GAME:
+				break;
+		}
 	}
 	static void draw(Model::GameState& state, const View::TUI& tui){
-		
-		// TODO: create game menu
-		
+		// Any change to render?
+		if(state.status.changed){
+			// Context-dependend actions
+			switch(state.window){
+				case Model::GameState::Window::MENU:
+					break;
+				case Model::GameState::Window::GAME:
+					break;
+			}
+			// Changes rendered, no further
+			state.status.changed = false;
+		}
+		/*
 		// Get current screen size/maximal cursor positions
 		Model::Dim2 dim = tui.getMaxSize();
 		
@@ -40,17 +55,17 @@ namespace Controller{
 		
 		// Draw outputs
 		tui.draw();
+		*/
 	}
 	static void life(Model::GameState& state, const View::TUI& tui){
 		// Circle status
 		auto event_last_time = NOW,
 			draw_last_time = event_last_time;
-		bool alive = true;
 		// Circling for updates
 		do{
 			// Time to process an event?
 			if(std::chrono::duration_cast<std::chrono::milliseconds>(NOW - event_last_time).count() >= EVENT_DELAY_MS){
-				alive = event(state, tui.getKey());
+				event(state, tui.getKey());
 				event_last_time = NOW;
 			}
 			// Time to draw something?
@@ -63,7 +78,7 @@ namespace Controller{
 					EVENT_DELAY_MS - std::chrono::duration_cast<std::chrono::milliseconds>(NOW - event_last_time).count(),
 					DRAW_DELAY_MS - std::chrono::duration_cast<std::chrono::milliseconds>(NOW - draw_last_time).count()
 				)) * 1000 /* MS to US */);
-		}while(alive);
+		}while(state.status.alive);
 	}
 
 	void run(const std::set<std::string>& params){
@@ -80,7 +95,12 @@ namespace Controller{
 		// Create TUI
 		const View::TUI tui = View::TUI::create();
 		// Create game state
-		Model::GameState state = {};
+		Model::GameState state = {
+			{true, true},
+			Model::GameState::Window::MENU,
+			Model::GameState::Menu::START,
+			{}
+		};
 		
 		// Change TUI colors
 		if(params.find("-invert") != params.cend())

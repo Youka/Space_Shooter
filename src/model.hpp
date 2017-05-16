@@ -4,8 +4,11 @@ namespace Model{
 	struct Dim2{unsigned width, height;};
 
 	struct GameState{
-		
-		// TODO
-		
+		// Metainformation
+		struct {bool alive : 4, changed : 4;} status;
+		enum class Window{MENU, GAME} window;
+		// Windows
+		enum class Menu{START, EXIT} menu;
+		struct{} game;
 	};
 }

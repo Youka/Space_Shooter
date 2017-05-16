@@ -1,7 +1,10 @@
 # Generated object files
-src/*.o
-src/*.res
+/src/*.o
+/src/*.res
 
 # Generated binaries
 /*.exe
 /Space_Shooter
+
+# Generated data files by binaries
+/*.dat

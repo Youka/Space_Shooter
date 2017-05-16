@@ -1,8 +1,8 @@
 #include "controller.hpp"
 
 #include <exception>
-#include <iostream>
 #include <typeinfo>
+#include <iostream>
 
 // Program entry
 int main(const int argc, const char** argv) noexcept{
