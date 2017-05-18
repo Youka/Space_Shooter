@@ -55,7 +55,7 @@ namespace Controller{
 			Model::GameState::Menu::START,
 			{
 				Model::GameState::Game::Status::RUN,
-				0,
+				0, 0,
 				{2, static_cast<int>((tui.getMaxSize().y - 1) >> 1)}
 			}
 		};

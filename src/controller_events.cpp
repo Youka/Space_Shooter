@@ -78,8 +78,10 @@ namespace Controller{
 					for(Model::Dim2i& bullet : state.game.player_bullets){
 						const int new_x = bullet.x + BULLET_SPEED;
 						for(Model::Dim2i& enemy : state.game.enemies)
-							if(enemy.y == bullet.y && enemy.x >= bullet.x && enemy.x <= new_x)
+							if(enemy.y == bullet.y && enemy.x >= bullet.x && enemy.x <= new_x){
 								enemy.x = bullet.x = -1;
+								state.game.score++;
+							}
 						bullet.x = new_x;
 					}
 					for(Model::Dim2i& bullet : state.game.enemy_bullets){
@@ -114,7 +116,9 @@ namespace Controller{
 							state.game.enemy_bullets.push_front({enemy.x-1, enemy.y});
 					
 					
-					// TODO: refine generation by time and increasing difficulty
+					// TODO: refine generation by time, increase difficulty
+					// TODO: lower enemy speed
+					// TODO: check position update after collisions
 					
 					
 					// Update time
@@ -177,8 +181,8 @@ namespace Controller{
 						tui.move(sz.x - 1, y);
 						tui.addChar('#');
 					}
-					// Draw time
-					const std::string time_text = std::to_string(state.game.time_ms / 1000u) + 's';
+					// Draw time & score
+					const std::string time_text = std::to_string(state.game.time_ms / 1000u) + "s - " + std::to_string(state.game.score) + 'p';
 					tui.move((sz.x - 1 - time_text.length()) >> 1, 0);
 					tui.addString(time_text, A_BOLD);
 					// Game status dependend display

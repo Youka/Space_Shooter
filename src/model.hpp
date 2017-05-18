@@ -17,7 +17,7 @@ namespace Model{
 		enum class Menu{START, EXIT} menu;
 		struct Game{
 			enum class Status{RUN, WON, LOST} status;
-			unsigned time_ms;
+			unsigned time_ms, score;
 			Dim2i player;
 			std::forward_list<Dim2i> enemies, player_bullets, enemy_bullets;
 		} game;
