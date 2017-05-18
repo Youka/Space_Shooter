@@ -9,7 +9,7 @@
 #define NOW std::chrono::system_clock::now()
 
 namespace Controller{
-	static void life(Model::GameState& state, const View::TUI& tui){
+	static void life(Model::GameState& state, View::TUI& tui){
 		// Circle status
 		auto event_last_time = NOW,
 			draw_last_time = event_last_time;
@@ -45,7 +45,7 @@ namespace Controller{
 		}
 
 		// Create TUI
-		const View::TUI tui = View::TUI::create();
+		View::TUI tui = View::TUI::create();
 		// Create game state
 		Model::GameState state = {
 			{
@@ -54,8 +54,8 @@ namespace Controller{
 			Model::GameState::Window::MENU,
 			Model::GameState::Menu::START,
 			{
-				{2, (tui.getMaxSize().y - 1) >> 1},
-				{}, {}
+				Model::GameState::Game::Status::RUN,
+				{2, (tui.getMaxSize().y - 1) >> 1}
 			}
 		};
 

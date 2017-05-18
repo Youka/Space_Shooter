@@ -42,58 +42,75 @@ namespace Controller{
 					}
 				break;
 			case Model::GameState::Window::GAME:
-				// Bullet movement
-				
-				// TODO
-				
-				// Enemy movement
-				
-				// TODO
-				
-				// Enemies & entities generation
-				
-				// TODO
-				
-				// Control actions
-				switch(key_code){
-					case 27: /* <ESC> */
-						state.window = Model::GameState::Window::MENU;
-						state.status.changed = true;
-						break;
-					case KEY_DOWN:
-						if(state.game.player.y < tui.getMaxSize().y - 2){
-							state.game.player.y++;
+				if(key_code == 27 /* <ESC> */){
+					state.window = Model::GameState::Window::MENU;
+					state.status.changed = true;
+				}else if(state.game.status == Model::GameState::Game::Status::RUN){
+					// Bullet movement
+					for(const Model::Dim2u bullet : state.game.player_bullets){
+						
+						static_cast<void>(bullet);
+						// TODO
+						
+					}
+					for(const Model::Dim2u bullet : state.game.enemy_bullets){
+						
+						static_cast<void>(bullet);
+						// TODO
+						
+					}
+					// Enemy movement
+					for(const Model::Dim2u enemy : state.game.enemies){
+						
+						static_cast<void>(enemy);
+						// TODO
+						
+					}
+					// Enemies & entities generation
+					
+					// TODO
+					
+					// Control actions
+					switch(key_code){
+						case 27: /* <ESC> */
+							state.window = Model::GameState::Window::MENU;
 							state.status.changed = true;
-						}
-						break;
-					case KEY_UP:
-						if(state.game.player.y > 1){
-							state.game.player.y--;
+							break;
+						case KEY_DOWN:
+							if(state.game.player.y < tui.getMaxSize().y - 2){
+								state.game.player.y++;
+								state.status.changed = true;
+							}
+							break;
+						case KEY_UP:
+							if(state.game.player.y > 1){
+								state.game.player.y--;
+								state.status.changed = true;
+							}
+							break;
+						case KEY_LEFT:
+							if(state.game.player.x > 1){
+								state.game.player.x--;
+								state.status.changed = true;
+							}
+							break;
+						case KEY_RIGHT:
+							if(state.game.player.x < tui.getMaxSize().x - 2){
+								state.game.player.x++;
+								state.status.changed = true;
+							}
+							break;
+						case ' ':
+							state.game.player_bullets.push_back({state.game.player.x + 1, state.game.player.y});
 							state.status.changed = true;
-						}
-						break;
-					case KEY_LEFT:
-						if(state.game.player.x > 1){
-							state.game.player.x--;
-							state.status.changed = true;
-						}
-						break;
-					case KEY_RIGHT:
-						if(state.game.player.x < tui.getMaxSize().x - 2){
-							state.game.player.x++;
-							state.status.changed = true;
-						}
-						break;
-					case ' ':
-						state.game.bullets.push_back({state.game.player.x + 1, state.game.player.y});
-						state.status.changed = true;
-						break;
+							break;
+					}
 				}
 				break;
 		}
 	}
 
-	void draw(Model::GameState& state, const View::TUI& tui) noexcept{
+	void draw(Model::GameState& state, View::TUI& tui) noexcept{
 		// Any change to render?
 		if(state.status.changed){
 			// Clear screen first
@@ -146,20 +163,46 @@ namespace Controller{
 						tui.move(sz.x - 1, y);
 						tui.addChar('#');
 					}
-					// Draw player ship
-					tui.move(state.game.player.x, state.game.player.y);
-					tui.addChar('}', A_BOLD);
-					// Draw enemies
-					for(const Model::Dim2 enemy : state.game.enemies){
-						tui.move(enemy.x, enemy.y);
-						tui.addChar('<', A_BOLD);
+					// Draw time
+					
+					// TODO
+					
+					// Game status dependend display
+					switch(state.game.status){
+						case Model::GameState::Game::Status::RUN:
+							// Draw player ship
+							tui.move(state.game.player.x, state.game.player.y);
+							tui.addChar('}', A_BOLD);
+							// Draw enemies
+							for(const Model::Dim2u enemy : state.game.enemies){
+								tui.move(enemy.x, enemy.y);
+								tui.addChar('<', A_BOLD);
+							}
+							// Draw bullets
+							for(const Model::Dim2u bullet : state.game.player_bullets){
+								tui.move(bullet.x, bullet.y);
+								tui.addChar('-', A_BOLD);
+							}
+							for(const Model::Dim2u bullet : state.game.enemy_bullets){
+								tui.move(bullet.x, bullet.y);
+								tui.addChar('+', A_BOLD);
+							}
+							break;
+						case Model::GameState::Game::Status::WON:
+						{
+							static const std::string won_text("You've won!");
+							tui.move((sz.x - 1 - won_text.length()) >> 1, (sz.y - 1) >> 1);
+							tui.addString(won_text, A_BOLD);
+							break;
+						}
+						case Model::GameState::Game::Status::LOST:
+						{
+							static const std::string won_text("You've lost!");
+							tui.move((sz.x - 1 - won_text.length()) >> 1, (sz.y - 1) >> 1);
+							tui.addString(won_text, A_BOLD);
+							break;
+						}
 					}
-					// Draw bullets
-					for(const Model::Dim2 bullet : state.game.bullets){
-						tui.move(bullet.x, bullet.y);
-						tui.addChar('-', A_BOLD);
-					}
-					break;
 				}
 			}
 			// Draw changes to screen

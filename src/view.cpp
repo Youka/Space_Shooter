@@ -28,13 +28,13 @@ namespace View{
 		return TUI();
 	}
 
-	Model::Dim2 TUI::getMaxSize(void) const noexcept{
-		unsigned char width, height;
+	Model::Dim2u TUI::getMaxSize(void) const noexcept{
+		unsigned width, height;
 		getmaxyx(stdscr, height, width);
 		return {width, height};
 	}
-	Model::Dim2 TUI::getPos(void) const noexcept{
-		unsigned char x, y;
+	Model::Dim2u TUI::getPos(void) const noexcept{
+		unsigned x, y;
 		getyx(stdscr, y, x);
 		return {x, y};
 	}
@@ -51,14 +51,15 @@ namespace View{
 	void TUI::move(const int x, const int y) const noexcept{
 		::move(y, x);
 	}
-	void TUI::addChar(const char c, const short fcolor, const short bcolor, const int attr) const{
+	void TUI::addChar(const char c, const short fcolor, const short bcolor, const int attr){
 		if(!has_colors())
 			throw std::domain_error("TUI doesn't support color change!");
 		start_color();
-		init_pair(2, fcolor, bcolor);
-		attron(COLOR_PAIR(2));
+		init_pair(this->color_pair, fcolor, bcolor);
+		attron(COLOR_PAIR(this->color_pair));
 		this->addChar(c, attr);
-		attroff(COLOR_PAIR(2));
+		attroff(COLOR_PAIR(this->color_pair));
+		this->color_pair++;
 	}
 	void TUI::addChar(const char c, const int attr) const noexcept{
 		if(attr){
@@ -68,14 +69,15 @@ namespace View{
 		}else
 			addch(c);
 	}
-	void TUI::addString(const std::string& str, const short fcolor, const short bcolor, const int attr) const{
+	void TUI::addString(const std::string& str, const short fcolor, const short bcolor, const int attr){
 		if(!has_colors())
 			throw std::domain_error("TUI doesn't support color change!");
 		start_color();
-		init_pair(2, fcolor, bcolor);
-		attron(COLOR_PAIR(2));
+		init_pair(this->color_pair, fcolor, bcolor);
+		attron(COLOR_PAIR(this->color_pair));
 		this->addString(str, attr);
-		attroff(COLOR_PAIR(2));
+		attroff(COLOR_PAIR(this->color_pair));
+		this->color_pair++;
 	}
 	void TUI::addString(const std::string& str, const int attr) const noexcept{
 		if(attr){
@@ -88,7 +90,8 @@ namespace View{
 	void TUI::clear(void) const noexcept{
 		erase();
 	}
-	void TUI::draw(void) const noexcept{
+	void TUI::draw(void) noexcept{
 		refresh();
+		this->color_pair = 2;
 	}
 }

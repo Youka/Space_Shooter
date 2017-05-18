@@ -3,7 +3,10 @@
 #include <vector>
 
 namespace Model{
-	struct Dim2{unsigned x, y;};
+	template<typename T>
+	struct Dim2{T x, y;};
+	
+	using Dim2u = Dim2<unsigned>;
 
 	struct GameState{
 		// Metainformation
@@ -11,9 +14,10 @@ namespace Model{
 		enum class Window{MENU, GAME} window;
 		// Windows
 		enum class Menu{START, EXIT} menu;
-		struct{
-			Dim2 player;
-			std::vector<Dim2> enemies, bullets;
+		struct Game{
+			enum class Status{RUN, WON, LOST} status;
+			Dim2u player;
+			std::vector<Dim2u> enemies, player_bullets, enemy_bullets;
 		} game;
 	};
 }
