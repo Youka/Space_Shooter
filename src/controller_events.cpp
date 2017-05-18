@@ -3,6 +3,8 @@
 #include <vector>
 #include <random>
 
+#include "conf.h"
+
 namespace Controller{
 	void event(Model::GameState& state, const View::TUI& tui) noexcept{
 		// Extract current key code
@@ -46,30 +48,6 @@ namespace Controller{
 					state.window = Model::GameState::Window::MENU;
 					state.status.changed = true;
 				}else if(state.game.status == Model::GameState::Game::Status::RUN){
-					// Bullet movement
-					for(const Model::Dim2u bullet : state.game.player_bullets){
-						
-						static_cast<void>(bullet);
-						// TODO
-						
-					}
-					for(const Model::Dim2u bullet : state.game.enemy_bullets){
-						
-						static_cast<void>(bullet);
-						// TODO
-						
-					}
-					// Enemy movement
-					for(const Model::Dim2u enemy : state.game.enemies){
-						
-						static_cast<void>(enemy);
-						// TODO
-						
-					}
-					// Enemies & entities generation
-					
-					// TODO
-					
 					// Control actions
 					switch(key_code){
 						case 27: /* <ESC> */
@@ -105,6 +83,33 @@ namespace Controller{
 							state.status.changed = true;
 							break;
 					}
+					// Bullet movement
+					for(const Model::Dim2u bullet : state.game.player_bullets){
+						
+						static_cast<void>(bullet);
+						// TODO
+						
+					}
+					for(const Model::Dim2u bullet : state.game.enemy_bullets){
+						
+						static_cast<void>(bullet);
+						// TODO
+						
+					}
+					// Enemy movement
+					for(const Model::Dim2u enemy : state.game.enemies){
+						
+						static_cast<void>(enemy);
+						// TODO
+						
+					}
+					// Enemies & entities generation
+					
+					// TODO
+					
+					// Update time
+					state.game.time_ms += EVENT_DELAY_MS;
+					state.status.changed = true;
 				}
 				break;
 		}
@@ -115,7 +120,7 @@ namespace Controller{
 		if(state.status.changed){
 			// Clear screen first
 			tui.clear();
-			// Draw menu background (once)
+			// Draw background (once)
 			static std::vector<unsigned short> stars_pos;
 			const auto sz = tui.getMaxSize();
 			if(stars_pos.size() != sz.x){
@@ -164,9 +169,9 @@ namespace Controller{
 						tui.addChar('#');
 					}
 					// Draw time
-					
-					// TODO
-					
+					const std::string time_text = std::to_string(state.game.time_ms / 1000u) + 's';
+					tui.move((sz.x - 1 - time_text.length()) >> 1, 0);
+					tui.addString(time_text, A_BOLD);
 					// Game status dependend display
 					switch(state.game.status){
 						case Model::GameState::Game::Status::RUN:
