@@ -106,15 +106,17 @@ namespace Controller{
 					// Enemy removement
 					state.game.enemies.remove_if([](const Model::Dim2i& enemy){return enemy.x <= 0;});
 					// Enemies & entities generation
-					
-					
-					// TODO: refine generation by time
-					
-					
-					std::uniform_int_distribution<int> rdist_spawn(0, 100),
-														rdist_y(1, sz.y-2);
+					std::uniform_int_distribution<int> rdist_spawn(0, 100), rdist_spawn_y(1, sz.y-2), rdist_shot(0, 100);
 					if(rdist_spawn(Controller::rd) == 0)
-						state.game.enemies.push_front({static_cast<int>(sz.x)-2, rdist_y(Controller::rd)});
+						state.game.enemies.push_front({static_cast<int>(sz.x)-2, rdist_spawn_y(Controller::rd)});
+					for(const Model::Dim2i& enemy : state.game.enemies)
+						if(rdist_shot(rd) == 0)
+							state.game.enemy_bullets.push_front({enemy.x-1, enemy.y});
+					
+					
+					// TODO: refine generation by time and increasing difficulty
+					
+					
 					// Update time
 					state.game.time_ms += EVENT_DELAY_MS;
 					state.status.changed = true;
