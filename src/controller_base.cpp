@@ -56,7 +56,7 @@ namespace Controller{
 			{
 				Model::GameState::Game::Status::RUN,
 				0,
-				{2, (tui.getMaxSize().y - 1) >> 1}
+				{2, static_cast<int>((tui.getMaxSize().y - 1) >> 1)}
 			}
 		};
 

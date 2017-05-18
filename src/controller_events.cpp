@@ -50,12 +50,8 @@ namespace Controller{
 				}else if(state.game.status == Model::GameState::Game::Status::RUN){
 					// Control actions
 					switch(key_code){
-						case 27: /* <ESC> */
-							state.window = Model::GameState::Window::MENU;
-							state.status.changed = true;
-							break;
 						case KEY_DOWN:
-							if(state.game.player.y < tui.getMaxSize().y - 2){
+							if(state.game.player.y < static_cast<int>(tui.getMaxSize().y - 2)){
 								state.game.player.y++;
 								state.status.changed = true;
 							}
@@ -73,31 +69,32 @@ namespace Controller{
 							}
 							break;
 						case KEY_RIGHT:
-							if(state.game.player.x < tui.getMaxSize().x - 2){
+							if(state.game.player.x < static_cast<int>(tui.getMaxSize().x - 2)){
 								state.game.player.x++;
 								state.status.changed = true;
 							}
 							break;
 						case ' ':
-							state.game.player_bullets.push_back({state.game.player.x + 1, state.game.player.y});
+							state.game.player_bullets.push_front({state.game.player.x + 1, state.game.player.y});
 							state.status.changed = true;
 							break;
 					}
-					// Bullet movement
-					for(const Model::Dim2u bullet : state.game.player_bullets){
+					// Bullet movement (and vanish or hit)
+					for(const Model::Dim2i bullet : state.game.player_bullets){
+						//const unsigned new_x = bullet.x + BULLET_SPEED;
 						
 						static_cast<void>(bullet);
 						// TODO
 						
 					}
-					for(const Model::Dim2u bullet : state.game.enemy_bullets){
+					for(const Model::Dim2i bullet : state.game.enemy_bullets){
 						
 						static_cast<void>(bullet);
 						// TODO
 						
 					}
-					// Enemy movement
-					for(const Model::Dim2u enemy : state.game.enemies){
+					// Enemy movement (and vanish)
+					for(const Model::Dim2i enemy : state.game.enemies){
 						
 						static_cast<void>(enemy);
 						// TODO
@@ -179,16 +176,16 @@ namespace Controller{
 							tui.move(state.game.player.x, state.game.player.y);
 							tui.addChar('}', A_BOLD);
 							// Draw enemies
-							for(const Model::Dim2u enemy : state.game.enemies){
+							for(const Model::Dim2i enemy : state.game.enemies){
 								tui.move(enemy.x, enemy.y);
 								tui.addChar('<', A_BOLD);
 							}
 							// Draw bullets
-							for(const Model::Dim2u bullet : state.game.player_bullets){
+							for(const Model::Dim2i bullet : state.game.player_bullets){
 								tui.move(bullet.x, bullet.y);
 								tui.addChar('-', A_BOLD);
 							}
-							for(const Model::Dim2u bullet : state.game.enemy_bullets){
+							for(const Model::Dim2i bullet : state.game.enemy_bullets){
 								tui.move(bullet.x, bullet.y);
 								tui.addChar('+', A_BOLD);
 							}
