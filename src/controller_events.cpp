@@ -79,9 +79,22 @@ namespace Controller{
 							state.status.changed = true;
 							break;
 					}
-					// Bullet movement (and vanish or hit)
+					// Bullet movement and collision
 					for(const Model::Dim2i bullet : state.game.player_bullets){
-						//const unsigned new_x = bullet.x + BULLET_SPEED;
+						const unsigned new_x = bullet.x + BULLET_SPEED;
+						
+						static_cast<void>(bullet);
+						// TODO
+						
+					}
+					for(const Model::Dim2i bullet : state.game.enemy_bullets){
+						
+						static_cast<void>(bullet);
+						// TODO
+						
+					}
+					// Bullet removement
+					for(const Model::Dim2i bullet : state.game.player_bullets){
 						
 						static_cast<void>(bullet);
 						// TODO
@@ -94,6 +107,13 @@ namespace Controller{
 						
 					}
 					// Enemy movement (and vanish)
+					for(const Model::Dim2i enemy : state.game.enemies){
+						
+						static_cast<void>(enemy);
+						// TODO
+						
+					}
+					// Enemy removement
 					for(const Model::Dim2i enemy : state.game.enemies){
 						
 						static_cast<void>(enemy);
