@@ -6,6 +6,9 @@
 #include "conf.h"
 
 namespace Controller{
+	// RNG
+	static std::random_device rd;
+
 	void event(Model::GameState& state, const View::TUI& tui) noexcept{
 		// Extract current key code
 		const int key_code = tui.getKey();
@@ -49,81 +52,69 @@ namespace Controller{
 					state.status.changed = true;
 				}else if(state.game.status == Model::GameState::Game::Status::RUN){
 					// Control actions
+					const auto sz = tui.getMaxSize();
 					switch(key_code){
 						case KEY_DOWN:
-							if(state.game.player.y < static_cast<int>(tui.getMaxSize().y - 2)){
+							if(state.game.player.y < static_cast<int>(sz.y - 2))
 								state.game.player.y++;
-								state.status.changed = true;
-							}
 							break;
 						case KEY_UP:
-							if(state.game.player.y > 1){
+							if(state.game.player.y > 1)
 								state.game.player.y--;
-								state.status.changed = true;
-							}
 							break;
 						case KEY_LEFT:
-							if(state.game.player.x > 1){
+							if(state.game.player.x > 1)
 								state.game.player.x--;
-								state.status.changed = true;
-							}
 							break;
 						case KEY_RIGHT:
-							if(state.game.player.x < static_cast<int>(tui.getMaxSize().x - 2)){
+							if(state.game.player.x < static_cast<int>(sz.x - 2))
 								state.game.player.x++;
-								state.status.changed = true;
-							}
 							break;
 						case ' ':
 							state.game.player_bullets.push_front({state.game.player.x + 1, state.game.player.y});
-							state.status.changed = true;
 							break;
 					}
 					// Bullet movement and collision
-					for(const Model::Dim2i bullet : state.game.player_bullets){
-						const unsigned new_x = bullet.x + BULLET_SPEED;
-						
-						static_cast<void>(bullet);
-						// TODO
-						
+					for(Model::Dim2i& bullet : state.game.player_bullets){
+						const int new_x = bullet.x + BULLET_SPEED;
+						for(Model::Dim2i& enemy : state.game.enemies)
+							if(enemy.y == bullet.y && enemy.x >= bullet.x && enemy.x <= new_x)
+								enemy.x = bullet.x = -1;
+						bullet.x = new_x;
 					}
-					for(const Model::Dim2i bullet : state.game.enemy_bullets){
-						
-						static_cast<void>(bullet);
-						// TODO
-						
+					for(Model::Dim2i& bullet : state.game.enemy_bullets){
+						const int new_x = bullet.x - BULLET_SPEED;
+						if(state.game.player.y == bullet.y && state.game.player.x <= bullet.x && state.game.player.x >= new_x){
+							state.game.status = Model::GameState::Game::Status::LOST;
+							break;
+						}
+						bullet.x = new_x;
 					}
 					// Bullet removement
-					for(const Model::Dim2i bullet : state.game.player_bullets){
-						
-						static_cast<void>(bullet);
-						// TODO
-						
-					}
-					for(const Model::Dim2i bullet : state.game.enemy_bullets){
-						
-						static_cast<void>(bullet);
-						// TODO
-						
-					}
-					// Enemy movement (and vanish)
-					for(const Model::Dim2i enemy : state.game.enemies){
-						
-						static_cast<void>(enemy);
-						// TODO
-						
+					static const auto bullet_remover = [&sz](const Model::Dim2i& bullet){return bullet.x <= 0 || bullet.x >= static_cast<int>(sz.x) - 1;};
+					state.game.player_bullets.remove_if(bullet_remover);
+					state.game.enemy_bullets.remove_if(bullet_remover);
+					// Enemy movement and collision
+					for(Model::Dim2i& enemy : state.game.enemies){
+						const int new_x = enemy.x - ENEMY_SPEED;
+						if(state.game.player.y == enemy.y && state.game.player.x <= enemy.x && state.game.player.x >= new_x){
+							state.game.status = Model::GameState::Game::Status::LOST;
+							break;
+						}
+						enemy.x = new_x;
 					}
 					// Enemy removement
-					for(const Model::Dim2i enemy : state.game.enemies){
-						
-						static_cast<void>(enemy);
-						// TODO
-						
-					}
+					state.game.enemies.remove_if([](const Model::Dim2i& enemy){return enemy.x <= 0;});
 					// Enemies & entities generation
 					
-					// TODO
 					
+					// TODO: refine generation by time
+					
+					
+					std::uniform_int_distribution<int> rdist_spawn(0, 100),
+														rdist_y(1, sz.y-2);
+					if(rdist_spawn(Controller::rd) == 0)
+						state.game.enemies.push_front({static_cast<int>(sz.x)-2, rdist_y(Controller::rd)});
 					// Update time
 					state.game.time_ms += EVENT_DELAY_MS;
 					state.status.changed = true;
@@ -142,10 +133,9 @@ namespace Controller{
 			const auto sz = tui.getMaxSize();
 			if(stars_pos.size() != sz.x){
 				stars_pos.resize(sz.x);
-				std::random_device rd;
 				std::uniform_int_distribution<int> rdist(0, sz.y-1);
 				for(unsigned short x = 0; x < sz.x; x++)
-					stars_pos[x] = rdist(rd);
+					stars_pos[x] = rdist(Controller::rd);
 			}
 			for(unsigned short x = 0; x < stars_pos.size(); x++){
 				tui.move(x, stars_pos[x]);
@@ -196,16 +186,16 @@ namespace Controller{
 							tui.move(state.game.player.x, state.game.player.y);
 							tui.addChar('}', A_BOLD);
 							// Draw enemies
-							for(const Model::Dim2i enemy : state.game.enemies){
+							for(const Model::Dim2i& enemy : state.game.enemies){
 								tui.move(enemy.x, enemy.y);
 								tui.addChar('<', A_BOLD);
 							}
 							// Draw bullets
-							for(const Model::Dim2i bullet : state.game.player_bullets){
+							for(const Model::Dim2i& bullet : state.game.player_bullets){
 								tui.move(bullet.x, bullet.y);
 								tui.addChar('-', A_BOLD);
 							}
-							for(const Model::Dim2i bullet : state.game.enemy_bullets){
+							for(const Model::Dim2i& bullet : state.game.enemy_bullets){
 								tui.move(bullet.x, bullet.y);
 								tui.addChar('+', A_BOLD);
 							}
