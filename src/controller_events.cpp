@@ -76,10 +76,10 @@ namespace Controller{
 					}
 					// Bullet movement and collision
 					for(Model::Dim2i& bullet : state.game.player_bullets){
-						const int new_x = bullet.x + BULLET_SPEED;
+						int new_x = bullet.x + BULLET_SPEED;
 						for(Model::Dim2i& enemy : state.game.enemies)
 							if(enemy.y == bullet.y && enemy.x >= bullet.x && enemy.x <= new_x){
-								enemy.x = bullet.x = -1;
+								enemy.x = new_x = -1;
 								state.game.score++;
 							}
 						bullet.x = new_x;
@@ -118,7 +118,6 @@ namespace Controller{
 					
 					// TODO: refine generation by time, increase difficulty
 					// TODO: lower enemy speed
-					// TODO: check position update after collisions
 					
 					
 					// Update time
