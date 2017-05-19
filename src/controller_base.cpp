@@ -3,7 +3,12 @@
 
 #include <iostream>
 #include <chrono>
-#include <unistd.h>
+#ifdef _WIN32
+	#include <windows.h>
+#else
+	#include <unistd.h>
+	#define Sleep(ms) usleep(ms * 1000)
+#endif
 
 // Current time shortcut
 #define NOW std::chrono::system_clock::now()
@@ -26,10 +31,11 @@ namespace Controller{
 				draw_last_time = NOW;
 			}
 			// Skip idle time / set scheduler for better performance
-			usleep(std::max(static_cast<typename std::chrono::milliseconds::rep>(0), std::min(
+			const auto rest_delay_ms = std::max(static_cast<typename std::chrono::milliseconds::rep>(0), std::min(
 					EVENT_DELAY_MS - std::chrono::duration_cast<std::chrono::milliseconds>(NOW - event_last_time).count(),
 					DRAW_DELAY_MS - std::chrono::duration_cast<std::chrono::milliseconds>(NOW - draw_last_time).count()
-				)) * 1000 /* MS to US */);
+				));
+			Sleep(rest_delay_ms);
 		}while(state.status.alive);
 	}
 
