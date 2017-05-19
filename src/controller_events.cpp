@@ -116,8 +116,9 @@ namespace Controller{
 							state.game.enemy_bullets.push_front({enemy.x-1, enemy.y});
 					
 					
-					// TODO: refine generation by time, increase difficulty ('Options' menu / data file)
-					// TODO: add WIN situation
+					// TODO: refine generation by time
+					// TODO: difficulty option (menu + data file)
+					// TODO: add/remove WIN situation
 					
 					
 					// Update time

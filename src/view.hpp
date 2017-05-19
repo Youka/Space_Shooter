@@ -1,9 +1,9 @@
 #pragma once
 
 #ifdef _WIN32
-#include <ncurses/ncurses.h>
+	#include <ncurses/ncurses.h>
 #else
-#include <ncurses.h>
+	#include <ncurses.h>
 #endif
 #include <memory>
 
