@@ -182,7 +182,7 @@ namespace Controller{
 						tui.addChar('#');
 					}
 					// Draw time & score
-					const std::string time_text = std::to_string(state.game.time_ms / 1000u) + "s - " + std::to_string(state.game.score) + 'p';
+					const std::string time_text = "Time: " + std::to_string(state.game.time_ms / 1000u) + "s - Score: " + std::to_string(state.game.score);
 					tui.move((sz.x - 1 - time_text.length()) >> 1, 0);
 					tui.addString(time_text, A_BOLD);
 					// Game status dependend display
